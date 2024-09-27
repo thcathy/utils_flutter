@@ -1,0 +1,56 @@
+{
+  "name": "auth0_flutter",
+  "version": "1.7.2",
+  "summary": "Auth0 SDK for Flutter",
+  "description": "Auth0 SDK for Flutter Android and iOS apps.",
+  "homepage": "https://auth0.com",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Auth0": "support@auth0.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "platforms": {
+    "ios": "13.0",
+    "osx": "11.0"
+  },
+  "ios": {
+    "dependencies": {
+      "Flutter": [
+
+      ]
+    }
+  },
+  "osx": {
+    "dependencies": {
+      "FlutterMacOS": [
+
+      ]
+    }
+  },
+  "dependencies": {
+    "Auth0": [
+      "2.7.2"
+    ],
+    "JWTDecode": [
+      "3.1.0"
+    ],
+    "SimpleKeychain": [
+      "1.1.0"
+    ]
+  },
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
+  "swift_versions": [
+    "5.7",
+    "5.8",
+    "5.9"
+  ],
+  "swift_version": "5.9"
+}

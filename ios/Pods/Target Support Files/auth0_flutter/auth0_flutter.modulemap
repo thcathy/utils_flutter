@@ -1,0 +1,6 @@
+framework module auth0_flutter {
+  umbrella header "auth0_flutter-umbrella.h"
+
+  export *
+  module * { export * }
+}
