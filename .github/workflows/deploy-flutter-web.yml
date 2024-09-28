@@ -26,4 +26,4 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
-          wrangler pages deploy --project-name ${{ secrets.PROJECT_NAME }} --env production build/web
+          wrangler pages deploy --project-name ${{ secrets.PROJECT_NAME }} build/web
