@@ -150,7 +150,7 @@ class AddHoldingToFundWidget extends StatelessWidget {
                   trailing: Text('${holding.fees!['INCLUDE_STAMP']}'),
                 ),
                 ListTile(
-                  title: const Text('Include Stamp:', style: TextStyle(fontSize: 12),),
+                  title: const Text('Exclude Stamp:', style: TextStyle(fontSize: 12),),
                   contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                   onTap: () => cubit.selectFee(holding.fees!['EXCLUDE_STAMP']),
                   trailing: Text('${holding.fees!['EXCLUDE_STAMP']}'),
