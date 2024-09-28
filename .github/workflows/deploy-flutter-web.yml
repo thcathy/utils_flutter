@@ -24,6 +24,6 @@ jobs:
         run: npm install -g wrangler
       - name: Deploy to Cloudflare Pages
         env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: |
-          wrangler publish ./build/web --project-name ${{ secrets.PROJECT_NAME }} --env production
+          wrangler pages deploy --project-name ${{ secrets.PROJECT_NAME }} --env production build/web
