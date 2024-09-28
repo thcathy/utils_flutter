@@ -24,7 +24,7 @@ jobs:
           PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
           ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
         run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/pages/projects/$PROJECT_NAME/deployments" \
+          curl -X POST "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/pages/projects/$PROJECT_NAME/deployments" \
           -H "Authorization: Bearer $CF_API_TOKEN" \
           -H "Content-Type: application/json" \
           --data '{
