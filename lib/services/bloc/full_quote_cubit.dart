@@ -11,6 +11,7 @@ import '../stock_service.dart';
 class FullQuoteCubit extends Cubit<FullQuoteState> {
   final stockCodesKey = 'CodesKey';
   final indexCodesKey = 'IndexCodesKey';
+  final showMoreKey = 'ShowMoreKey';
   final StockService stockService;
   late final SharedPreferences prefs;
 
@@ -24,14 +25,14 @@ class FullQuoteCubit extends Cubit<FullQuoteState> {
   }
 
   getFullQuote() {
-    emit(state.copyWith(loading: true));
     final stockCodes = (prefs.getString(stockCodesKey) ?? '').asList().join(',');
     stockService.getFullQuote(codes: stockCodes).then((results) => receiveFullQuotes(results));
   }
 
-  stockQuoteSelect(List<String> stockCodes, List<String> selectedIndexCodes) {
+  stockQuoteSelect(List<String> stockCodes, List<String> selectedIndexCodes, bool showMore) {
     prefs.setString(stockCodesKey, stockCodes.asJson());
     prefs.setString(indexCodesKey, selectedIndexCodes.asJson());
+    emit(state.copyWith(loading: true, showMore: showMore));
     getFullQuote();
   }
 
@@ -44,7 +45,7 @@ class FullQuoteCubit extends Cubit<FullQuoteState> {
     final allQuotes = (results['allQuotes'] as Map<String, dynamic>).map((key, value) => MapEntry(key, StockQuote.fromJson(value)));
     final funds = (results['funds'] as List<dynamic>).map((item) => Fund.fromJson(item as Map<String, dynamic>)).toList();
 
-    emit(FullQuoteState(
+    emit(state.copyWith(
       indexQuotes: indexQuotes,
       stockQuotes: stockQuotes,
       allQuotes: allQuotes,
@@ -65,9 +66,10 @@ class FullQuoteState {
   final Map<String, StockQuote>? allQuotes;
   final List<Fund>? funds;
   final bool loading;
+  final bool showMore;
 
   const FullQuoteState({this.indexQuotes, this.stockQuotes, this.selectedIndexCodes
-    , this.holdings, this.allQuotes, this.funds, required this.loading});
+    , this.holdings, this.allQuotes, this.funds, required this.loading, this.showMore = false});
 
   FullQuoteState copyWith({
     List<StockQuote>? indexQuotes,
@@ -77,6 +79,7 @@ class FullQuoteState {
     Map<String, StockQuote>? allQuotes,
     List<Fund>? funds,
     bool? loading,
+    bool? showMore,
   }) {
     return FullQuoteState(
       indexQuotes: indexQuotes ?? this.indexQuotes,
@@ -86,6 +89,7 @@ class FullQuoteState {
       allQuotes: allQuotes ?? this.allQuotes,
       funds: funds ?? this.funds,
       loading: loading ?? this.loading,
+      showMore: showMore ?? this.showMore,
     );
   }
 }

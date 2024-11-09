@@ -7,13 +7,10 @@ import 'package:utils_flutter/services/stock_service.dart';
 part 'full_quote_settings_state.dart';
 
 class FullQuoteSettingsCubit extends Cubit<FullQuoteSettingsState> {
-  final List<String> stockCodes;
-  final Map<String, bool> indexCodes;
-
   final StockService stockService;
 
-  FullQuoteSettingsCubit(this.stockService, this.stockCodes, this.indexCodes)
-      : super(FullQuoteSettingsState(stockCodesControllers: const [], indexCodes: indexCodes)) {
+  FullQuoteSettingsCubit(this.stockService, List<String> stockCodes, Map<String, bool> indexCodes, bool showMore)
+      : super(FullQuoteSettingsState(stockCodesControllers: const [], indexCodes: indexCodes, showMore: showMore)) {
     stockCodesLoaded(stockCodes);
   }
 

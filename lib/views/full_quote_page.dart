@@ -59,9 +59,10 @@ class FullQuotePage extends AuthenticatedPage {
         idToken: idToken,
         stockCodes: stockCodes,
         indexCodes: indexCodes,
+        showMore: cubit.state.showMore,
       ),
     ) as FullQuotePageSettingsDialogResult;
-    cubit.stockQuoteSelect(result.stockCodes, result.selectedIndexCodes);
+    cubit.stockQuoteSelect(result.stockCodes, result.selectedIndexCodes, result.showMore);
   }
 
   @override
@@ -112,7 +113,7 @@ class FullQuotePage extends AuthenticatedPage {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FundsWidget(funds: state.funds ?? []),
+                    FundsWidget(funds: state.funds ?? [], showMore: state.showMore,),
                     const MarketDailyReportsWidget(),
                     const Divider(),
                   ],
@@ -137,12 +138,14 @@ class FullQuotePageSettingsDialog extends StatelessWidget {
   final String idToken;
   final List<String> stockCodes;
   final Map<String, bool> indexCodes;
+  final bool showMore;
 
   const FullQuotePageSettingsDialog({
     super.key,
     required this.idToken,
     required this.stockCodes,
     required this.indexCodes,
+    required this.showMore,
   });
 
   onClose(BuildContext context, FullQuoteSettingsState state) {
@@ -160,7 +163,7 @@ class FullQuotePageSettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FullQuoteSettingsCubit(StockService(idToken: idToken), stockCodes, indexCodes),
+      create: (context) => FullQuoteSettingsCubit(StockService(idToken: idToken), stockCodes, indexCodes, showMore),
       child: BlocBuilder<FullQuoteSettingsCubit, FullQuoteSettingsState>(builder: (context, state) {
         final settingsCubit = context.read<FullQuoteSettingsCubit>();
         final stockCodesController = state.stockCodesControllers.asMap();
@@ -269,8 +272,9 @@ class FullQuotePageSettingsDialog extends StatelessWidget {
 
 class FundsWidget extends StatelessWidget {
   final List<Fund> funds;
+  final bool showMore;
 
-  const FundsWidget({super.key, required this.funds});
+  const FundsWidget({super.key, required this.funds, required this.showMore});
 
   @override
   Widget build(BuildContext context) {
@@ -321,8 +325,8 @@ class FundsWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(child: Container()),
-                  if (false) SizedBox(width: 60), // Placeholder for spacing
-                  if (false) SizedBox(width: 60), // Placeholder for spacing
+                  if (showMore) SizedBox(width: 60), // Placeholder for spacing
+                  if (showMore) SizedBox(width: 60), // Placeholder for spacing
                   Expanded(
                     child: Text(
                       NumberFormat('#,###').format(gross),
@@ -343,22 +347,22 @@ class FundsWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: Text('Code')),
-                  if (false) Expanded(child: Text('Qty', textAlign: TextAlign.end)),
-                  if (false) Expanded(child: Text('Price', textAlign: TextAlign.end)),
-                  Expanded(child: Text('Gross', textAlign: TextAlign.end)),
-                  Expanded(child: Text('+/-', textAlign: TextAlign.end)),
-                  Expanded(child: Text('%', textAlign: TextAlign.end)),
+                  const Expanded(child: Text('Code')),
+                  if (showMore) const Expanded(child: Text('Qty', textAlign: TextAlign.end)),
+                  if (showMore) const Expanded(child: Text('Price', textAlign: TextAlign.end)),
+                  const Expanded(child: Text('Gross', textAlign: TextAlign.end)),
+                  const Expanded(child: Text('+/-', textAlign: TextAlign.end)),
+                  const Expanded(child: Text('%', textAlign: TextAlign.end)),
                 ],
               ),
               ...fund.holdings.entries.map((entry) {
                 return FundHoldingRow(
                   stockCode: entry.key,
                   holding: entry.value,
-                  showMore: false,
+                  showMore: showMore,
                 );
               }),
               const Divider(),
