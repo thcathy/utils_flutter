@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:utils_flutter/extensions/string.dart';
+import 'package:utils_flutter/models/daily_asset_summary.dart';
 import 'package:utils_flutter/models/holding_stock.dart';
 
 import '../../models/fund.dart';
@@ -15,7 +16,7 @@ class FullQuoteCubit extends Cubit<FullQuoteState> {
   final StockService stockService;
   late final SharedPreferences prefs;
 
-  FullQuoteCubit(this.stockService) : super(const FullQuoteState(loading: true)) {
+  FullQuoteCubit(this.stockService) : super(FullQuoteState(loading: true)) {
     init();
   }
 
@@ -25,8 +26,10 @@ class FullQuoteCubit extends Cubit<FullQuoteState> {
   }
 
   getFullQuote() {
-    final stockCodes = (prefs.getString(stockCodesKey) ?? '').asList().join(',');
-    stockService.getFullQuote(codes: stockCodes).then((results) => receiveFullQuotes(results));
+    final stockCodes = (prefs.getString(stockCodesKey) ?? '').asList();
+    final stockCodesString = stockCodes.join(',');
+    stockService.getFullQuote(codes: stockCodesString).then((results) => receiveFullQuotes(results));
+    stockService.getDailyAssetSummaries(stockCodes).then((result) => receiveSummaries(result));
   }
 
   stockQuoteSelect(List<String> stockCodes, List<String> selectedIndexCodes, bool showMore) {
@@ -34,6 +37,10 @@ class FullQuoteCubit extends Cubit<FullQuoteState> {
     prefs.setString(indexCodesKey, selectedIndexCodes.asJson());
     emit(state.copyWith(loading: true, showMore: showMore));
     getFullQuote();
+  }
+
+  receiveSummaries(Map<String, DailyAssetSummary> summaries) {
+    emit(state.copyWith(assetSummaries: summaries));
   }
 
   receiveFullQuotes(Map<String, dynamic> results) async {
@@ -64,12 +71,22 @@ class FullQuoteState {
   final List<String>? selectedIndexCodes;
   final List<HoldingStock>? holdings;
   final Map<String, StockQuote>? allQuotes;
+  final Map<String, DailyAssetSummary> assetSummaries;
   final List<Fund>? funds;
   final bool loading;
   final bool showMore;
 
-  const FullQuoteState({this.indexQuotes, this.stockQuotes, this.selectedIndexCodes
-    , this.holdings, this.allQuotes, this.funds, required this.loading, this.showMore = false});
+  FullQuoteState({
+    this.indexQuotes,
+    this.stockQuotes,
+    this.selectedIndexCodes,
+    this.holdings,
+    this.allQuotes,
+    this.funds,
+    required this.loading,
+    this.showMore = false,
+    Map<String, DailyAssetSummary>? assetSummaries,
+  }) : assetSummaries = assetSummaries ?? {};
 
   FullQuoteState copyWith({
     List<StockQuote>? indexQuotes,
@@ -77,6 +94,7 @@ class FullQuoteState {
     List<String>? selectedIndexCodes,
     List<HoldingStock>? holdings,
     Map<String, StockQuote>? allQuotes,
+    Map<String, DailyAssetSummary>? assetSummaries,
     List<Fund>? funds,
     bool? loading,
     bool? showMore,
@@ -87,6 +105,7 @@ class FullQuoteState {
       selectedIndexCodes: selectedIndexCodes ?? this.selectedIndexCodes,
       holdings: holdings ?? this.holdings,
       allQuotes: allQuotes ?? this.allQuotes,
+      assetSummaries: assetSummaries ?? this.assetSummaries,
       funds: funds ?? this.funds,
       loading: loading ?? this.loading,
       showMore: showMore ?? this.showMore,

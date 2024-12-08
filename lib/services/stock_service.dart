@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:utils_flutter/services/squote_base_service.dart';
 
+import '../models/daily_asset_summary.dart';
 import '../models/holding_stock.dart';
 import '../models/market_data.dart';
 
@@ -15,6 +16,7 @@ class StockService extends SquoteBaseService {
   final String _fullQuoteUrl = '/rest/stock/fullquote';
   final String _saveQueryUrl = '/rest/stock/save/query';
   final String _loadQueryUrl = '/rest/stock/load/query';
+  final String _getLatestSummariesUrl = '/rest/stock/summary/latest';
 
   StockService({required super.idToken});
 
@@ -46,21 +48,6 @@ class StockService extends SquoteBaseService {
     }
   }
 
-  // Future<List<StockQuote>> getStockPerformanceQuotes() async {
-  //   try {
-  //     final response = await http.get(Uri.parse(stockPerformanceUrl), headers: buildHeaders());
-  //     if (response.statusCode == 200) {
-  //       List<dynamic> data = json.decode(response.body);
-  //       return data.map((item) => StockQuote.fromJson(item)).toList();
-  //     } else {
-  //       throw Exception('Failed to load stock performance quotes');
-  //     }
-  //   } catch (error) {
-  //     handleError(error);
-  //     return [];
-  //   }
-  // }
-
   Future<Map<String, MarketDailyReport>> getMarketDailyReport() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl$_marketDailyReportUrl'), headers: buildHeaders());
@@ -88,21 +75,6 @@ class StockService extends SquoteBaseService {
     }
   }
 
-  // Future<List<StockQuote>> getIndexQuotes() async {
-  //   try {
-  //     final response = await http.get(Uri.parse(indexQuoteUrl));
-  //     if (response.statusCode == 200) {
-  //       List<dynamic> data = json.decode(response.body);
-  //       return data.map((item) => StockQuote.fromJson(item)).toList();
-  //     } else {
-  //       throw Exception('Failed to load index quotes');
-  //     }
-  //   } catch (error) {
-  //     handleError(error);
-  //     return [];
-  //   }
-  // }
-
   Future<String> saveQuery({String codes = ''}) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl$_saveQueryUrl?codes=$codes'), headers: buildHeaders());
@@ -129,4 +101,19 @@ class StockService extends SquoteBaseService {
     }
   }
 
+  Future<Map<String, DailyAssetSummary>> getDailyAssetSummaries(List<String> symbols) async {
+    try {
+      final symbolParam = symbols.join(',');
+      final url = Uri.parse('$baseUrl$_getLatestSummariesUrl?symbols=$symbolParam');
+      final response = await http.get(url, headers: buildHeaders());
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = json.decode(response.body);
+        return data.map((key, value) => MapEntry(key, DailyAssetSummary.fromJson(value)));
+      } else {
+        throw Exception('Failed to load daily asset summaries. StatusCode=${response.statusCode}');
+      }
+    } catch (e, stack) {
+      throw Exception('Failed to get daily asset summaries: $e \n $stack');
+    }
+  }
 }

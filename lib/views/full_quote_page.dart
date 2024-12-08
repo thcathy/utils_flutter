@@ -17,6 +17,7 @@ import 'package:utils_flutter/services/bloc/market_daily_report_cubit.dart';
 import 'package:utils_flutter/services/fund_service.dart';
 import 'package:utils_flutter/services/stock_service.dart';
 import 'package:utils_flutter/views/authenticated_page.dart';
+import 'package:utils_flutter/views/widgets/holdings_widget.dart';
 
 import '../models/market_data.dart';
 import '../services/create_holding_service.dart';
@@ -40,13 +41,15 @@ class FullQuotePage extends AuthenticatedPage {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.settings_outlined,),
-        onPressed: () => showPriceChangesDialog(context),
+        icon: const Icon(
+          Icons.settings_outlined,
+        ),
+        onPressed: () => showPageSettingsDialog(context),
       ),
     ];
   }
 
-  Future<void> showPriceChangesDialog(BuildContext context) async {
+  Future<void> showPageSettingsDialog(BuildContext context) async {
     final stockCodes = cubit.state.stockQuotes?.map((q) => q.stockCode).toList() ?? [];
     final indexCodes = Map.fromIterable(cubit.state.indexQuotes!.map((q) => q.stockCode),
       key: (code) => code as String,
@@ -83,44 +86,46 @@ class FullQuotePage extends AuthenticatedPage {
         final mediaWidth = MediaQuery.of(context).size.width;
         final boxWidth = mediaWidth < 800 ? 800.0 : MediaQuery.of(context).size.width / 2 - 32;
 
-        return Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 16,
-            runSpacing: 16,
-            children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: boxWidth),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (state.loading) const LinearProgressIndicator(),
-                    StockQuotesWidget(stockQuotes: state.stockQuotes),
-                    const Divider(),
-                    IndexesWidget(
-                      indexQuotes: state.indexQuotes,
-                      selectedIndexCode: state.selectedIndexCodes,
-                    ),
-                    const Divider(),
-                    HoldingsWidget(holdings: state.holdings, stockQuotes: state.allQuotes ?? {}),
-                    const Divider(),
-                  ],
+        return Wrap(alignment: WrapAlignment.start, spacing: 16, runSpacing: 16, children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: boxWidth),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (state.loading) const LinearProgressIndicator(),
+                StockQuotesWidget(stockQuotes: state.stockQuotes),
+                const Divider(),
+                IndexesWidget(
+                  indexQuotes: state.indexQuotes,
+                  selectedIndexCode: state.selectedIndexCodes,
                 ),
-              ),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: boxWidth),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FundsWidget(funds: state.funds ?? [], showMore: state.showMore,),
-                    const MarketDailyReportsWidget(),
-                    const Divider(),
-                  ],
+                const Divider(),
+                HoldingsWidget(
+                  holdings: state.holdings,
+                  stockQuotes: state.allQuotes ?? {},
+                  summaries: state.assetSummaries,
                 ),
-              ),
-            ]
-        );
+                const Divider(),
+              ],
+            ),
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: boxWidth),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FundsWidget(
+                  funds: state.funds ?? [],
+                  showMore: state.showMore,
+                ),
+                const MarketDailyReportsWidget(),
+                const Divider(),
+              ],
+            ),
+          ),
+        ]);
       }),
     );
   }
@@ -131,7 +136,8 @@ class FullQuotePageSettingsDialogResult {
   List<String> stockCodes;
   List<String> selectedIndexCodes;
 
-  FullQuotePageSettingsDialogResult({required this.showMore, required this.stockCodes, required this.selectedIndexCodes});
+  FullQuotePageSettingsDialogResult(
+      {required this.showMore, required this.stockCodes, required this.selectedIndexCodes});
 }
 
 class FullQuotePageSettingsDialog extends StatelessWidget {
@@ -233,8 +239,12 @@ class FullQuotePageSettingsDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     IconButton(icon: const Icon(Icons.add), onPressed: () => settingsCubit.addStockCode()),
-                    IconButton(icon: const Icon(Icons.cloud_download_outlined), onPressed: () => settingsCubit.loadStockCodesFromServer()),
-                    IconButton(icon: const Icon(Icons.cloud_upload_outlined), onPressed: () => settingsCubit.saveStockCodesToServer()),
+                    IconButton(
+                        icon: const Icon(Icons.cloud_download_outlined),
+                        onPressed: () => settingsCubit.loadStockCodesFromServer()),
+                    IconButton(
+                        icon: const Icon(Icons.cloud_upload_outlined),
+                        onPressed: () => settingsCubit.saveStockCodesToServer()),
                   ],
                 ),
                 Row(
@@ -269,7 +279,6 @@ class FullQuotePageSettingsDialog extends StatelessWidget {
   }
 }
 
-
 class FundsWidget extends StatelessWidget {
   final List<Fund> funds;
   final bool showMore;
@@ -284,7 +293,7 @@ class FundsWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ...funds.map((fund) {
-          final gross = fund.holdings.values.fold(0.0, (sum, holding) => sum + holding.gross);;
+          final gross = fund.holdings.values.fold(0.0, (sum, holding) => sum + holding.gross);
 
           return Column(
             children: [
@@ -325,8 +334,8 @@ class FundsWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(child: Container()),
-                  if (showMore) SizedBox(width: 60), // Placeholder for spacing
-                  if (showMore) SizedBox(width: 60), // Placeholder for spacing
+                  if (showMore) const SizedBox(width: 60), // Placeholder for spacing
+                  if (showMore) const SizedBox(width: 60), // Placeholder for spacing
                   Expanded(
                     child: Text(
                       NumberFormat('#,###').format(gross),
@@ -398,133 +407,10 @@ class FundHoldingRow extends StatelessWidget {
   }
 }
 
-class HoldingsWidget extends StatelessWidget {
-  final List<HoldingStock>? holdings;
-  final Map<String, StockQuote> stockQuotes;
-
-  HoldingsWidget({super.key, this.holdings, required this.stockQuotes});
-
-  @override
-  Widget build(BuildContext context) {
-    if (holdings == null || holdings!.isEmpty) return Container();
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ...holdings!.map((holding) {
-          final spotPrice = double.parse(stockQuotes[holding.code]!.price ?? '0');
-          final changePercentage = (spotPrice - holding.price) / holding.price * 100;
-          final formattedChangePercentage = NumberFormat('#.##').format(changePercentage);
-          final holdingPrice = NumberFormat('#.###').format(holding.price);
-          final holdingGross = NumberFormat('#,###').format(holding.gross);
-          final date = DateFormat('yy/MM/dd').format(holding.date);
-
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(holding.code),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(holding.side == Side.BUY ? '$formattedChangePercentage%' : '' ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(holdingPrice),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: const Icon(Icons.price_change_outlined),
-                      onPressed: () => _showPriceChangesDialog(context, holding),
-                  ),)
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text('$holdingGross (${holding.side == Side.BUY ? '+' : '-'}${holding.quantity})', textAlign: TextAlign.right),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(date, textAlign: TextAlign.right),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(holding.fundName ?? ''),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ],
-          );
-        })
-      ],
-    );
-  }
-
-  void _showPriceChangesDialog(BuildContext context, HoldingStock holding) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: _buildHeader(context, holding),
-          content: _buildContent(holding),
-        );
-      },
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, HoldingStock holding) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '${NumberFormat('###0.00').format(holding.price)} ${holding.side == Side.BUY ? '+' : '-'}${holding.quantity}',
-        ),
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContent(HoldingStock holding) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildListItem(holding.price * 1.06, '+6%'),
-        _buildListItem(holding.price * 1.0262, '+2.62%'),
-        _buildListItem(holding.price * 1.01618, '+1.618%'),
-        _buildListItem(holding.price / 1.01618, '-1.618%'),
-        _buildListItem(holding.price / 1.0262, '-2.62%'),
-        _buildListItem(holding.price / 1.06, '-6%'),
-      ],
-    );
-  }
-
-  Widget _buildListItem(double value, String percentage) {
-    return ListTile(
-      title: Text(NumberFormat('###0.00').format(value)),
-      trailing: Text(percentage),
-    );
-  }
-}
-
 class IndexesWidget extends StatelessWidget {
   final List<StockQuote>? indexQuotes;
   final List<String>? selectedIndexCode;
+
   const IndexesWidget({super.key, this.indexQuotes, this.selectedIndexCode});
 
   List<StockQuote> filteredIndexQuotes() {
@@ -551,7 +437,10 @@ class IndexesWidget extends StatelessWidget {
               ),
               Expanded(
                 flex: 2,
-                child: Text('${quote.price} (${quote.change})', textAlign: TextAlign.right, ),
+                child: Text(
+                  '${quote.price} (${quote.change})',
+                  textAlign: TextAlign.right,
+                ),
               ),
               Expanded(
                 flex: 2,
@@ -567,6 +456,7 @@ class IndexesWidget extends StatelessWidget {
 
 class StockQuotesWidget extends StatelessWidget {
   final List<StockQuote>? stockQuotes;
+
   const StockQuotesWidget({super.key, this.stockQuotes});
 
   @override
@@ -619,7 +509,6 @@ class StockQuotesWidget extends StatelessWidget {
         })
       ],
     );
-
   }
 }
 
@@ -628,38 +517,45 @@ class MarketDailyReportsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MarketDailyReportCubit, MarketDailyReportState>(builder: (context, state) {
-      if (state is MarketDailyReportInitial) {
-        return const CircularProgressIndicator();
-      }
+    return BlocBuilder<MarketDailyReportCubit, MarketDailyReportState>(
+      builder: (context, state) {
+        if (state is MarketDailyReportInitial) {
+          return const CircularProgressIndicator();
+        }
 
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(flex: 1, child: Text('day before')),
-              Expanded(flex: 2, child: Text('date')),
-              Expanded(flex: 3, child: Text('HSI / PE / yield')),
-              Expanded(flex: 3, child: Text('HSI / PE / yield')),
-            ],
-          ),
-          ...state.reports.keys.map((key) {
-            final report = state.reports[key];
-            return Row(
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(flex: 1, child: Text(key)),
-                Expanded(flex: 2, child: Text(report!.date.toString())),
-                Expanded(flex: 3, child: Text('${report.hsi?.price ?? ''} / ${report.hsi?.pe ?? ''} / ${report.hsi?.yieldRate ?? ''}')),
-                Expanded(flex: 3, child: Text('${report.hscei?.price ?? ''} / ${report.hscei?.pe ?? ''} / ${report.hscei?.yieldRate ?? ''}')),
+                Expanded(flex: 1, child: Text('day before')),
+                Expanded(flex: 2, child: Text('date')),
+                Expanded(flex: 3, child: Text('HSI / PE / yield')),
+                Expanded(flex: 3, child: Text('HSI / PE / yield')),
               ],
-            );
-          })
-        ],
-      );
-    },);
+            ),
+            ...state.reports.keys.map((key) {
+              final report = state.reports[key];
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(flex: 1, child: Text(key)),
+                  Expanded(flex: 2, child: Text(report!.date.toString())),
+                  Expanded(
+                      flex: 3,
+                      child: Text(
+                          '${report.hsi?.price ?? ''} / ${report.hsi?.pe ?? ''} / ${report.hsi?.yieldRate ?? ''}')),
+                  Expanded(
+                      flex: 3,
+                      child: Text(
+                          '${report.hscei?.price ?? ''} / ${report.hscei?.pe ?? ''} / ${report.hscei?.yieldRate ?? ''}')),
+                ],
+              );
+            })
+          ],
+        );
+      },
+    );
   }
 }
-
