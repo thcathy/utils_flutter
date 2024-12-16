@@ -113,10 +113,11 @@ class HoldingsWidget extends StatelessWidget {
   }
 
   Widget _buildContent(HoldingStock holding, DailyAssetSummary? summary) {
+    const stdDevRange = 20;
     List<Widget> children = [];
     if (summary != null) {
-      final stdDev = summary.stdDevs[30] ?? 0;
-      children.add(ListTile(title: Text('30d sd = ${NumberFormat('###0.00').format(stdDev)}')));
+      final stdDev = summary.stdDevs[stdDevRange] ?? 0;
+      children.add(ListTile(title: Text('${stdDevRange}d sd = ${NumberFormat('###0.00').format(stdDev)}')));
       children.add(_buildListItem(holding.price * (1 + stdDev / 100), '+sd'));
       children.add(_buildListItem(holding.price * (1 + stdDev * 0.95 / 100), '+sd 0.95'));
       children.add(_buildListItem(holding.price / (1 + stdDev * 0.95 / 100), '-sd 0.95'));
