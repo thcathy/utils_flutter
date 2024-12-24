@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:utils_flutter/services/bloc/auth_bloc.dart';
+import 'package:utils_flutter/services/bloc/stock_trading_task_cubit.dart';
+import 'package:utils_flutter/services/stock_service.dart';
 import 'package:utils_flutter/views/base_page.dart';
 import 'package:utils_flutter/views/create_holding_page.dart';
 import 'package:utils_flutter/views/full_quote_page.dart';
@@ -47,11 +49,48 @@ class HomePage extends BasePage {
                 onTap: () => NavigatorExtension.goToAuthenticatedPage(context, ManageFundPage()),
               ),
               const Divider(),
+              StockTradingTaskStatus(state),
+              const Divider(),
               const UserProfile(),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class StockTradingTaskStatus extends StatelessWidget {
+  final AuthState state;
+
+  const StockTradingTaskStatus(this.state, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (state is AuthStateLoggedOut) {
+      return Container();
+    }
+
+    return BlocProvider(
+      create: (context) {
+        final authState = context.read<AuthBloc>().state as AuthStateLoggedIn;
+        final idToken = authState.authUser.idToken;
+        return StockTradingTaskCubit(
+            StockService(idToken: idToken)
+        );
+      },
+      child: BlocBuilder<StockTradingTaskCubit, StockTradingTaskState>(
+        builder: (context, state) {
+          final cubit = context.read<StockTradingTaskCubit>();
+          return ListTile(
+            title: const Text('Trading task'),
+            trailing: Switch(
+              value: state.isEnabled ?? false,
+              onChanged: state.isEnabled == null ? null : (value) => cubit.updateFlag(value),
+            ),
+          );
+        },
+      ),
     );
   }
 }

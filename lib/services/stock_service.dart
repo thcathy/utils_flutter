@@ -17,6 +17,8 @@ class StockService extends SquoteBaseService {
   final String _saveQueryUrl = '/rest/stock/save/query';
   final String _loadQueryUrl = '/rest/stock/load/query';
   final String _getLatestSummariesUrl = '/rest/stock/summary/latest';
+  final String _getStockTradingEnableUrl = '/rest/stock/trading/enable';
+  final String _postStockTradingEnableUrl = '/rest/stock/trading/enable/';
 
   StockService({required super.idToken});
 
@@ -114,6 +116,26 @@ class StockService extends SquoteBaseService {
       }
     } catch (e, stack) {
       throw Exception('Failed to get daily asset summaries: $e \n $stack');
+    }
+  }
+
+  Future<bool> getStockTradingEnable() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl$_getStockTradingEnableUrl'));
+      return json.decode(response.body);
+    } catch (e, stack) {
+      throw Exception('Failed to stock trading enable flag: $e \n $stack');
+    }
+  }
+
+  Future<void> setStockTradingTaskEnable(bool value) async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl$_postStockTradingEnableUrl$value'));
+      if (response.statusCode != 200) {
+        throw Exception('Failed to change stock trading enable flag. StatusCode=${response.statusCode}');
+      }
+    } catch (e, stack) {
+      throw Exception('Failed to change stock trading enable flag: $e \n $stack');
     }
   }
 }
