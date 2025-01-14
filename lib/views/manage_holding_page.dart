@@ -1,16 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:utils_flutter/models/side.dart';
 import 'package:utils_flutter/services/bloc/auth_bloc.dart';
-import 'package:utils_flutter/services/bloc/manage_fund_bloc.dart';
 import 'package:utils_flutter/services/bloc/manage_holding_cubit.dart';
-import 'package:utils_flutter/services/fund_service.dart';
 import 'package:utils_flutter/services/stock_service.dart';
 import 'package:utils_flutter/views/authenticated_page.dart';
-import 'package:utils_flutter/views/base_page.dart';
 
 import '../utils/dialogs/delete_dialog.dart';
 

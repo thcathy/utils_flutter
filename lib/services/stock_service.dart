@@ -10,9 +10,9 @@ import '../models/market_data.dart';
 class StockService extends SquoteBaseService {
   final String _listHoldingUrl = '/rest/stock/holding/list';
   final String _deleteHoldingUrl = '/rest/stock/holding/delete/';
-  final String _stockPerformanceUrl = '/rest/stock/liststocksperf';
+  // final String _stockPerformanceUrl = '/rest/stock/liststocksperf';
   final String _marketDailyReportUrl = '/rest/stock/marketreports';
-  final String _indexQuoteUrl = '/rest/stock/indexquotes';
+  // final String _indexQuoteUrl = '/rest/stock/indexquotes';
   final String _fullQuoteUrl = '/rest/stock/fullquote';
   final String _saveQueryUrl = '/rest/stock/save/query';
   final String _loadQueryUrl = '/rest/stock/load/query';
