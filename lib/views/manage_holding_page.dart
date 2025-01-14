@@ -34,10 +34,10 @@ class ManageHoldingPage extends AuthenticatedPage {
       return SizedBox(
         height: MediaQuery.of(context).size.height,
         child: GridView.builder(
-          padding: const EdgeInsets.only(bottom: 200.0),
+          padding: const EdgeInsets.only(bottom: 250.0),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 250.0, // Maximum width for each item
-              childAspectRatio: 1.8, // Height to width ratio of each item
+              maxCrossAxisExtent: 200.0, // Maximum width for each item
+              childAspectRatio: 1.5, // Height to width ratio of each item
               crossAxisSpacing: 10.0, // Space between columns
               mainAxisSpacing: 10.0, // Space between rows
             ),
@@ -79,10 +79,9 @@ class ManageHoldingPage extends AuthenticatedPage {
                               children: [
                                 Text(DateFormat('yyyy-MM-dd').format(holding.date)),
                                 Text(
-                                  holding.gross.toStringAsFixed(2),
+                                  '${holding.gross.toStringAsFixed(0)}@${holding.price.toStringAsFixed(2)}',
                                   style: TextStyle(color: holding.side == Side.BUY ? Colors.green : Colors.deepOrange),
                                 ),
-                                Text('HSCEI: ${holding.hsce?.toStringAsFixed(2)}'),
                               ],
                             ),
                           ),

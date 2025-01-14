@@ -121,7 +121,7 @@ class StockService extends SquoteBaseService {
 
   Future<bool> getStockTradingEnable() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl$_getStockTradingEnableUrl'));
+      final response = await http.get(Uri.parse('$baseUrl$_getStockTradingEnableUrl'), headers: buildHeaders());
       return json.decode(response.body);
     } catch (e, stack) {
       throw Exception('Failed to stock trading enable flag: $e \n $stack');
@@ -130,7 +130,7 @@ class StockService extends SquoteBaseService {
 
   Future<void> setStockTradingTaskEnable(bool value) async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl$_postStockTradingEnableUrl$value'));
+      final response = await http.post(Uri.parse('$baseUrl$_postStockTradingEnableUrl$value'), headers: buildHeaders());
       if (response.statusCode != 200) {
         throw Exception('Failed to change stock trading enable flag. StatusCode=${response.statusCode}');
       }
