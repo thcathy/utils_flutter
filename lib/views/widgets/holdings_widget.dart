@@ -119,8 +119,8 @@ class HoldingsWidget extends StatelessWidget {
       final stdDev = summary.stdDevs[stdDevRange] ?? 0;
       children.add(ListTile(title: Text('${stdDevRange}d sd = ${NumberFormat('###0.00').format(stdDev)}')));
       children.add(_buildListItem(holding.price * (1 + stdDev / 100), '+sd'));
-      children.add(_buildListItem(holding.price * (1 + stdDev * 0.95 / 100), '+sd 0.95'));
-      children.add(_buildListItem(holding.price / (1 + stdDev * 0.95 / 100), '-sd 0.95'));
+      children.add(_buildListItem(holding.price * (1 + stdDev * 0.7 / 100), '+sd 0.7'));
+      children.add(_buildListItem(holding.price / (1 + stdDev * 0.7 / 100), '-sd 0.7'));
       children.add(_buildListItem(holding.price / (1 + stdDev / 100), '-sd'));
       children.add(const Divider());
     }
