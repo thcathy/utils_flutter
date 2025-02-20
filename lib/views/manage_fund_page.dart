@@ -137,6 +137,8 @@ class ActionList extends StatelessWidget {
         ActionRow([ Text('[fundName]/'), ActionButton('cashin'), Text('/[amount]')]),
         ActionRow([ Text('[fundName]/['), ActionButton('add'), Text(','), ActionButton('subtract'), Text(']/'), ActionButton('profit'), Text('/[amounts(,separated)]')]),
         ActionRow([ Text('[fundName]/'), ActionButton('get-trades/from/binance') ]),
+        ActionRow([ Text('[fundName]/'), ActionButton('algo') ]),
+        ActionRow([ Text('[fundName]/'), ActionButton('algo'), Text('/[code]'),  ]),
       ],
     );
   }

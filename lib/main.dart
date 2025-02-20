@@ -1,10 +1,10 @@
-import 'package:auth0_flutter/auth0_flutter_web.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:auth0_flutter/auth0_flutter_web.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:utils_flutter/views/home_page.dart';
 import 'package:utils_flutter/services/bloc/auth_bloc.dart';
+import 'package:utils_flutter/views/home_page.dart';
 
 Future<void> main() async {
   const String env = String.fromEnvironment('ENV', defaultValue: 'prod');
