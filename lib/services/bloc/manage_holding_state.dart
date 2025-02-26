@@ -30,5 +30,5 @@ class ManageHoldingState {
 final class ManageHoldingInitial extends ManageHoldingState {}
 
 final class ManageHoldingLoaded extends ManageHoldingState {
-  ManageHoldingLoaded({super.holdings});
+  ManageHoldingLoaded({super.holdings, super.selectedFundName});
 }

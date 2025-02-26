@@ -10,6 +10,7 @@ import '../models/market_data.dart';
 class StockService extends SquoteBaseService {
   final String _listHoldingUrl = '/rest/stock/holding/list';
   final String _deleteHoldingUrl = '/rest/stock/holding/delete/';
+  final String _deleteHoldingPairUrl = '/rest/stock/holding/delete-pair/';
   // final String _stockPerformanceUrl = '/rest/stock/liststocksperf';
   final String _marketDailyReportUrl = '/rest/stock/marketreports';
   // final String _indexQuoteUrl = '/rest/stock/indexquotes';
@@ -46,7 +47,21 @@ class StockService extends SquoteBaseService {
         throw Exception('Failed to delete stock holding');
       }
     } catch (e, stack) {
-      throw Exception('Failed to load funds: $e \n $stack');
+      throw Exception('Failed to delete stock holding: $e \n $stack');
+    }
+  }
+
+  Future<List<HoldingStock>> deleteStockHoldingPair(String id1, String id2) async {
+    try {
+      final response = await http.delete(Uri.parse('$baseUrl$_deleteHoldingPairUrl$id1/$id2'), headers: buildHeaders());
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((item) => HoldingStock.fromJson(item)).toList();
+      } else {
+        throw Exception('Failed to delete stock holding pair');
+      }
+    } catch (e, stack) {
+      throw Exception('Failed to delete stock holding pair: $e \n $stack');
     }
   }
 

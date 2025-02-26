@@ -166,7 +166,9 @@ class ManageHoldingPage extends StatelessWidget {
                 context,
                 '''are you sure?''',
               );
-              if (isDelete) {}
+              if (isDelete) {
+                cubit.deleteHoldingPair(selectedHoldings[0].id, selectedHoldings[1].id);
+              }
             },
             alignment: Alignment.bottomRight,
           ),

@@ -15,11 +15,15 @@ class ManageHoldingCubit extends Cubit<ManageHoldingState> {
   }
 
   receiveStockHoldings(List<HoldingStock> holdings) {
-    emit(ManageHoldingLoaded(holdings: holdings));
+    emit(ManageHoldingLoaded(holdings: holdings, selectedFundName: state.selectedFundName));
   }
 
   deleteHolding(String id) {
     stockService.deleteStockHolding(id).then((holdings) => receiveStockHoldings(holdings));
+  }
+
+  deleteHoldingPair(String id1, String id2) {
+    stockService.deleteStockHoldingPair(id1, id2).then((holdings) => receiveStockHoldings(holdings));
   }
 
   selectFundName(String? fundName) {
