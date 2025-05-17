@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:utils_flutter/services/squote_base_service.dart';
 
@@ -25,15 +25,15 @@ class FundService extends SquoteBaseService {
     }
   }
 
-  Future<String> submitRequest(String request) async {
+  Future<String> submitRequest(String request, bool isDelete) async {
     if (request.endsWith('/')) {
       request = request.substring(0, request.length - 1);
     }
 
-    print('Calling fund request URL: $baseUrl$_baseRequestUrl$request');
-
     try {
-      final response = await http.get(Uri.parse('$baseUrl$_baseRequestUrl$request'), headers: buildHeaders());
+      final response = isDelete
+          ? await http.delete(Uri.parse('$baseUrl$_baseRequestUrl$request'), headers: buildHeaders())
+          : await http.get(Uri.parse('$baseUrl$_baseRequestUrl$request'), headers: buildHeaders());
       if (response.statusCode == 200) {
         return response.body;
       } else {

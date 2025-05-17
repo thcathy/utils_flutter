@@ -14,7 +14,16 @@ class ManageFundBloc extends Bloc<ManageFundEvent, ManageFundState> {
     on<ManageFundLoadedEvent>((event, emit) => emit(state.copyWith(funds: event.funds)));
 
     on<ManageFundActionSelectedEvent>((event, emit) {
+      final isQueryParameter = event.queryParameter;
+      if (isQueryParameter) {
+        state.urlEditController.text += state.urlEditController.text.contains('?') ? '&' : '?';
+      }
+
       state.urlEditController.text += event.action;
+
+      if (!isQueryParameter) {
+        state.urlEditController.text += '/';
+      }
     });
 
     on<ManageFundUrlClearEvent>((event, emit) {
@@ -26,7 +35,8 @@ class ManageFundBloc extends Bloc<ManageFundEvent, ManageFundState> {
       final url = state.urlEditController.text;
       state.histories.insert(0, url);
       emit(state.copyWith(histories: state.histories));
-      fundService.submitRequest(state.urlEditController.text).then((response) => add(ManageFundSubmittedEvent(response)));
+      fundService.submitRequest(state.urlEditController.text, event.isDelete)
+          .then((response) => add(ManageFundSubmittedEvent(response)));
     });
 
     on<ManageFundSubmittedEvent>((event, emit) {
@@ -48,8 +58,10 @@ class ManageFundLoadedEvent extends ManageFundEvent {
 
 class ManageFundActionSelectedEvent extends ManageFundEvent {
   final String action;
-  ManageFundActionSelectedEvent(this.action);
+  final bool queryParameter;
+  ManageFundActionSelectedEvent(this.action, this.queryParameter);
 }
+
 
 class ManageFundSubmittedEvent extends ManageFundEvent {
   final String response;
@@ -58,7 +70,8 @@ class ManageFundSubmittedEvent extends ManageFundEvent {
 
 class ManageFundUrlClearEvent extends ManageFundEvent {}
 class ManageFundSubmitEvent extends ManageFundEvent {
-  ManageFundSubmitEvent();
+  final bool isDelete;
+  ManageFundSubmitEvent({required this.isDelete});
 }
 
 class ManageFundState {

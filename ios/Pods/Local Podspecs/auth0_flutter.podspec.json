@@ -20,16 +20,12 @@
   },
   "ios": {
     "dependencies": {
-      "Flutter": [
-
-      ]
+      "Flutter": []
     }
   },
   "osx": {
     "dependencies": {
-      "FlutterMacOS": [
-
-      ]
+      "FlutterMacOS": []
     }
   },
   "dependencies": {

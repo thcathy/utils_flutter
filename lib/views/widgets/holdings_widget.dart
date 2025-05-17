@@ -112,7 +112,7 @@ class HoldingsWidget extends StatelessWidget {
   }
 
   Widget _buildContent(HoldingStock holding, DailyAssetSummary? summary) {
-    const stdDevRange = 20;
+    const stdDevRange = 11;
     List<Widget> children = [];
     if (summary != null) {
       final stdDev = summary.stdDevs[stdDevRange] ?? 0;

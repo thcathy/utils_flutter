@@ -99,8 +99,13 @@ class RequestController extends StatelessWidget {
               children: [
                 TextButton.icon(
                   icon: const Icon(Icons.send),
-                  onPressed: () => context.read<ManageFundBloc>().add(ManageFundSubmitEvent()),
+                  onPressed: () => context.read<ManageFundBloc>().add(ManageFundSubmitEvent(isDelete: false)),
                   label: const Text('Submit'),
+                ),
+                TextButton.icon(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => context.read<ManageFundBloc>().add(ManageFundSubmitEvent(isDelete: true)),
+                  label: const Text('Delete'),
                 ),
                 TextButton.icon(
                   icon: const Icon(Icons.close),
@@ -138,7 +143,13 @@ class ActionList extends StatelessWidget {
         ActionRow([ Text('[fundName]/['), ActionButton('add'), Text(','), ActionButton('subtract'), Text(']/'), ActionButton('profit'), Text('/[amounts(,separated)]')]),
         ActionRow([ Text('[fundName]/'), ActionButton('get-trades/from/binance') ]),
         ActionRow([ Text('[fundName]/'), ActionButton('algo') ]),
-        ActionRow([ Text('[fundName]/'), ActionButton('algo'), Text('/[code]'),  ]),
+        ActionRow([
+          Text('[fundName]/'),
+          ActionButton('algo'),
+          Text('/[code]?'),
+          ActionButton('quantity=', queryParameter: true,),
+          ActionButton('basePrice=', queryParameter: true,),
+        ]),
       ],
     );
   }
@@ -162,8 +173,9 @@ class ActionRow extends StatelessWidget {
 
 class ActionButton extends StatelessWidget {
   final String action;
+  final bool queryParameter;
 
-  const ActionButton(this.action, {super.key});
+  const ActionButton(this.action, {super.key, this.queryParameter = false});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +183,8 @@ class ActionButton extends StatelessWidget {
       height: 36,
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: FilledButton.tonal(
-        onPressed: () => context.read<ManageFundBloc>().add(ManageFundActionSelectedEvent('$action/')),
+        onPressed: () => context.read<ManageFundBloc>()
+            .add(ManageFundActionSelectedEvent(action, queryParameter)),
         style: FilledButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           shape: RoundedRectangleBorder(
