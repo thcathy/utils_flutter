@@ -18,8 +18,8 @@ class StockService extends SquoteBaseService {
   final String _saveQueryUrl = '/rest/stock/save/query';
   final String _loadQueryUrl = '/rest/stock/load/query';
   final String _getLatestSummariesUrl = '/rest/stock/summary/latest';
-  final String _getStockTradingEnableUrl = '/rest/stock/trading/enable';
-  final String _postStockTradingEnableUrl = '/rest/stock/trading/enable/';
+  final String _getStockTradingEnableUrl = '/rest/stock/trading/enabledByMarket';
+  final String _postStockTradingEnableUrl = '/rest/stock/trading/enable';
 
   StockService({required super.idToken});
 
@@ -134,18 +134,19 @@ class StockService extends SquoteBaseService {
     }
   }
 
-  Future<bool> getStockTradingEnable() async {
+  Future<Map<String, bool>> getStockTradingEnable() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl$_getStockTradingEnableUrl'), headers: buildHeaders());
-      return json.decode(response.body);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data.map((key, value) => MapEntry(key, value as bool));
     } catch (e, stack) {
       throw Exception('Failed to stock trading enable flag: $e \n $stack');
     }
   }
 
-  Future<void> setStockTradingTaskEnable(bool value) async {
+  Future<void> setStockTradingTaskEnable(String market, bool value) async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl$_postStockTradingEnableUrl$value'), headers: buildHeaders());
+      final response = await http.post(Uri.parse('$baseUrl$_postStockTradingEnableUrl/$market/$value'), headers: buildHeaders());
       if (response.statusCode != 200) {
         throw Exception('Failed to change stock trading enable flag. StatusCode=${response.statusCode}');
       }

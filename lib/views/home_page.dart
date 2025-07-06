@@ -82,12 +82,16 @@ class StockTradingTaskStatus extends StatelessWidget {
       child: BlocBuilder<StockTradingTaskCubit, StockTradingTaskState>(
         builder: (context, state) {
           final cubit = context.read<StockTradingTaskCubit>();
-          return ListTile(
-            title: const Text('Trading task'),
-            trailing: Switch(
-              value: state.isEnabled ?? false,
-              onChanged: state.isEnabled == null ? null : (value) => cubit.updateFlag(value),
-            ),
+          final markets = ['HK', 'US'];
+          
+          return Column(
+            children: markets.map((market) => ListTile(
+              title: Text('Trading task - $market'),
+              trailing: Switch(
+                value: state.enabledByMarket?[market] ?? false,
+                onChanged: state.enabledByMarket?[market] == null ? null : (value) => cubit.updateFlag(market, value),
+              ),
+            )).toList(),
           );
         },
       ),

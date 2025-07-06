@@ -149,6 +149,8 @@ class ActionList extends StatelessWidget {
           Text('/[code]?'),
           ActionButton('quantity=', queryParameter: true,),
           ActionButton('basePrice=', queryParameter: true,),
+          ActionButton('stdDevRange=', queryParameter: true,),
+          ActionButton('stdDevMultiplier=', queryParameter: true,),
         ]),
       ],
     );

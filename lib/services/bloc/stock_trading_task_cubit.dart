@@ -4,9 +4,9 @@ import 'package:utils_flutter/services/stock_service.dart';
 
 @immutable
 class StockTradingTaskState {
-  final bool? isEnabled;
+  final Map<String, bool>? enabledByMarket;
 
-  StockTradingTaskState(this.isEnabled);
+  StockTradingTaskState(this.enabledByMarket);
 }
 
 class StockTradingTaskCubit extends Cubit<StockTradingTaskState> {
@@ -16,12 +16,12 @@ class StockTradingTaskCubit extends Cubit<StockTradingTaskState> {
     stockService.getStockTradingEnable().then((isEnabled) => receiveFlag(isEnabled));
   }
 
-  receiveFlag(bool isEnabled) {
-    emit(StockTradingTaskState(isEnabled));
+  receiveFlag(Map<String, bool> enabledByMarket) {
+    emit(StockTradingTaskState(enabledByMarket));
   }
 
-  updateFlag(bool isEnabled) {
-    stockService.setStockTradingTaskEnable(isEnabled)
+  updateFlag(String market, bool isEnabled) {
+    stockService.setStockTradingTaskEnable(market, isEnabled)
         .then((_) => stockService.getStockTradingEnable())
         .then((isEnabled) => receiveFlag(isEnabled));
   }
