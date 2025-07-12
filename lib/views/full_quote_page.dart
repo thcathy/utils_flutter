@@ -501,7 +501,7 @@ class StockQuotesWidget extends StatelessWidget {
                 flex: MediaQuery.of(context).size.width > 600 ? 1 : 0,
                 child: Visibility(
                   visible: MediaQuery.of(context).size.width > 600, // Adjust breakpoint as needed
-                  child: Text(' ${quote.lastUpdate?.split(' ')[1] ?? ''}', textAlign: TextAlign.right),
+                  child: Text(' ${quote.lastUpdate?.contains(' ') == true ? quote.lastUpdate!.split(' ')[1] : ''}', textAlign: TextAlign.right),
                 ),
               ),
             ],
