@@ -151,6 +151,7 @@ class ActionList extends StatelessWidget {
           ActionButton('basePrice=', queryParameter: true,),
           ActionButton('stdDevRange=', queryParameter: true,),
           ActionButton('stdDevMultiplier=', queryParameter: true,),
+          ActionButton('grossAmount=', queryParameter: true,),
         ]),
         ActionRow([ActionButton('sync-stock-exec'), Text('/'), ActionButton('HK'), Text(','), ActionButton('US')])
       ],
