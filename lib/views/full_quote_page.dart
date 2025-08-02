@@ -400,7 +400,7 @@ class FundHoldingRow extends StatelessWidget {
         if (showMore) Expanded(child: Text('${holding.quantity}', textAlign: TextAlign.end)),
         if (showMore) Expanded(child: Text('${holding.price}', textAlign: TextAlign.end)),
         Expanded(child: Text(NumberFormat('##0').format(holding.gross), textAlign: TextAlign.end)),
-        Expanded(child: Text(NumberFormat('##0').format(holding.netProfit), textAlign: TextAlign.end)),
+        Expanded(child: Text(NumberFormat('##0').format(holding.netProfit ?? 0), textAlign: TextAlign.end)),
         Expanded(child: Text('$changePercentage%', textAlign: TextAlign.end)),
       ],
     );

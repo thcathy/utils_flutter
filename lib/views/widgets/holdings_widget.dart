@@ -21,7 +21,7 @@ class HoldingsWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ...holdings!.map((holding) {
-          final spotPrice = double.parse(stockQuotes[holding.code]!.price ?? '0');
+          final spotPrice = double.parse(stockQuotes[holding.code]?.price ?? '0');
           final changePercentage = (spotPrice - holding.price) / holding.price * 100;
           final formattedChangePercentage = NumberFormat('#.##').format(changePercentage);
           final holdingPrice = NumberFormat('#.###').format(holding.price);
