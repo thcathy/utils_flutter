@@ -152,6 +152,7 @@ class ActionList extends StatelessWidget {
           ActionButton('stdDevRange=', queryParameter: true,),
           ActionButton('stdDevMultiplier=', queryParameter: true,),
           ActionButton('grossAmount=', queryParameter: true,),
+          ActionButton('sellOnly=', queryParameter: true,),
         ]),
         ActionRow([ActionButton('sync-stock-exec'), Text('/'), ActionButton('HK'), Text(','), ActionButton('US')])
       ],
@@ -167,8 +168,9 @@ class ActionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 4,
         children: children,
       ),
     );
